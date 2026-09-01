@@ -32,7 +32,7 @@ export default function AdminDashboardPage() {
   // Gallery Modal State
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [newGalTitle, setNewGalTitle] = useState('');
-  const [newGalCategory, setNewGalCategory] = useState<GalleryCategory>('New Designs');
+  const [newGalCategory, setNewGalCategory] = useState<GalleryCategory>('Bridal');
   const [newGalImg, setNewGalImg] = useState('');
   const [newGalPrice, setNewGalPrice] = useState('');
 
