@@ -38,7 +38,7 @@ export const INITIAL_SERVICES: ServiceItem[] = [
     priceRange: '',
     duration: '',
     description: 'Get your outfit stitched according to your measurements and preferred design. We create comfortable, well-fitted outfits with attention to detail. Ladies Wear • Custom Designs • Made-to-Measure Stitching',
-    imageUrl: '/custom-stitching.jpg',
+    imageUrl: '/new-design.jpg',
     featured: true,
   },
   {
