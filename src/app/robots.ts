@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://sribalajitailoring.com/sitemap.xml',
+    sitemap: 'https://sri-balaji-tailoring-website-five.vercel.app/sitemap.xml',
   }
 }

@@ -30,14 +30,14 @@ export const metadata: Metadata = {
     "Aari work blouse Sriperumbudur",
   ],
   authors: [{ name: "J. Sundari" }],
-  metadataBase: new URL("https://sribalajitailoring.com"),
+  metadataBase: new URL("https://sri-balaji-tailoring-website-five.vercel.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Sri Balaji Tailoring Centre | Premium Women's Tailoring & Embroidery",
     description: "Beautifully crafted blouses, embroidery and custom designs made with care in Nenmeli, Sriperumbudur by Master Tailor J. Sundari.",
-    url: "https://sribalajitailoring.com",
+    url: "https://sri-balaji-tailoring-website-five.vercel.app",
     siteName: "Sri Balaji Tailoring Centre",
     images: [
       {
@@ -71,7 +71,7 @@ export default function RootLayout({
     "name": "Sri Balaji Tailoring Centre",
     "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=1000",
     "@id": "https://sribalajitailoring.com",
-    "url": "https://sribalajitailoring.com",
+    "url": "https://sri-balaji-tailoring-website-five.vercel.app",
     "telephone": "+917010858623",
     "priceRange": "₹350 - ₹12,000",
     "address": {
