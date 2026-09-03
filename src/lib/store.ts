@@ -368,8 +368,8 @@ export const INITIAL_REVIEWS: Review[] = [
 const IS_CLIENT = typeof window !== 'undefined';
 
 const STORAGE_KEYS = {
-  SERVICES: 'sbt_services_v4',
-  GALLERY: 'sbt_gallery_v11',
+  SERVICES: 'sbt_services_v5',
+  GALLERY: 'sbt_gallery_v12',
   REVIEWS: 'sbt_reviews',
   ADMIN_AUTH: 'sbt_admin_logged_in',
 };
