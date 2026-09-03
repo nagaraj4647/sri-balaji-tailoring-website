@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Playfair_Display, Outfit } from "next/font/google";
 import "./globals.css";
 
@@ -113,6 +114,18 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-ivory-100 text-stone-900 font-sans antialiased selection:bg-gold-500 selection:text-maroon-950 overflow-x-hidden w-full">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-HNCE2YYMFL"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-HNCE2YYMFL');
+          `}
+        </Script>
         {children}
       </body>
     </html>
