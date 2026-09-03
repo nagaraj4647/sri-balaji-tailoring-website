@@ -116,9 +116,9 @@ export default function RootLayout({
       <body className="bg-ivory-100 text-stone-900 font-sans antialiased selection:bg-gold-500 selection:text-maroon-950 overflow-x-hidden w-full">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-HNCE2YYMFL"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

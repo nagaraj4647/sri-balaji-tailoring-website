@@ -126,8 +126,11 @@ const GooeyNav = ({
 
     if (textRef.current) {
       textRef.current.classList.remove('active');
-      void textRef.current.offsetWidth;
-      textRef.current.classList.add('active');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          textRef.current?.classList.add('active');
+        });
+      });
     }
 
     if (filterRef.current) {

@@ -20,6 +20,7 @@ export default function Footer() {
                   src="/logo.webp"
                   alt="Sri Balaji Tailoring Centre Logo"
                   fill
+                  sizes="48px"
                   className="object-contain"
                 />
               </div>

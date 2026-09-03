@@ -31,6 +31,7 @@ export default function Header() {
               src="/logo.webp"
               alt="Sri Balaji Tailoring Centre Logo"
               fill
+              sizes="52px"
               className="object-contain"
               priority
             />

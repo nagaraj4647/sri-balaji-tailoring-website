@@ -167,7 +167,7 @@ export default function HeroCarousel() {
                 fill
                 priority={idx === 0}
                 className="object-cover"
-                sizes="(max-width: 768px) 90vw, 420px"
+                sizes="(max-width: 768px) 280px, 320px"
               />
               
               {/* Gradient for caption legibility - only on active */}
