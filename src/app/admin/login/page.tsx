@@ -7,7 +7,6 @@ import { DataStore } from '@/lib/store';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,12 +17,12 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     setTimeout(() => {
-      // Default credentials check (admin / sribalaji123)
-      if ((username === 'admin' || username === 'sundari') && (password === 'sribalaji123' || password === 'admin123')) {
+      // Default credentials check
+      if (password === 'pari') {
         DataStore.setAdminLoggedIn(true);
         router.push('/admin');
       } else {
-        setError('Invalid Admin credentials. Try username: admin / password: sribalaji123');
+        setError('Invalid Admin password. Try: pari');
         setLoading(false);
       }
     }, 600);
@@ -55,21 +54,6 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           
-          <div className="space-y-1">
-            <label className="text-xs font-bold uppercase tracking-wider text-gold-400 flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5" />
-              <span>Username</span>
-            </label>
-            <input
-              type="text"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. admin"
-              className="w-full px-4 py-3 rounded-xl bg-maroon-950 border border-gold-500/30 text-sm text-ivory-100 focus:border-gold-400 outline-none"
-            />
-          </div>
-
           <div className="space-y-1">
             <label className="text-xs font-bold uppercase tracking-wider text-gold-400 flex items-center gap-1.5">
               <Lock className="w-3.5 h-3.5" />
@@ -104,7 +88,7 @@ export default function AdminLoginPage() {
 
         <div className="pt-4 border-t border-gold-500/20 text-center">
           <p className="text-[11px] text-ivory-400">
-            Default Login: <code className="text-gold-300">admin</code> / <code className="text-gold-300">sribalaji123</code>
+            Default Password: <code className="text-gold-300">pari</code>
           </p>
           <a href="/" className="inline-block text-xs text-gold-400 hover:underline mt-2">
             ← Return to Main Website
