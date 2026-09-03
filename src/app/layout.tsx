@@ -31,9 +31,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "J. Sundari" }],
   metadataBase: new URL("https://sri-balaji-tailoring-website-five.vercel.app"),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "Sri Balaji Tailoring Centre | Premium Women's Tailoring & Embroidery",
     description: "Beautifully crafted blouses, embroidery and custom designs made with care in Nenmeli, Sriperumbudur by Master Tailor J. Sundari.",

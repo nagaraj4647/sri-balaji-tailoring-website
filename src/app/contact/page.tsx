@@ -1,4 +1,17 @@
-﻿'use client';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Contact | Sri Balaji Tailoring Centre',
+  description: 'Get in touch with Sri Balaji Tailoring Centre in Nenmeli, Sriperumbudur. Book an appointment for designer blouse stitching or bridal embroidery.',
+  alternates: {
+    canonical: 'https://sri-balaji-tailoring-website-five.vercel.app/contact',
+  },
+  openGraph: {
+    title: 'Contact | Sri Balaji Tailoring Centre',
+    description: 'Get in touch with Sri Balaji Tailoring Centre in Nenmeli, Sriperumbudur. Book an appointment for designer blouse stitching or bridal embroidery.',
+    url: 'https://sri-balaji-tailoring-website-five.vercel.app/contact',
+  }
+};
 
 import React from 'react';
 import Header from '@/components/Header';
@@ -12,6 +25,7 @@ export default function ContactPage() {
 
       {/* Header */}
       <Header />
+      <h1 className="sr-only">Contact Sri Balaji Tailoring Centre</h1>
 
       {/* Contact Section */}
       <ContactSection />

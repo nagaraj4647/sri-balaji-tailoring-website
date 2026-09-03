@@ -18,11 +18,11 @@ export default function AdminLoginPage() {
 
     setTimeout(() => {
       // Default credentials check
-      if (password === 'pari') {
+      if (password === 'sundari') {
         DataStore.setAdminLoggedIn(true);
         router.push('/admin');
       } else {
-        setError('Invalid Admin password. Try: pari');
+        setError('Invalid Admin password.');
         setLoading(false);
       }
     }, 600);
@@ -87,9 +87,6 @@ export default function AdminLoginPage() {
         </form>
 
         <div className="pt-4 border-t border-gold-500/20 text-center">
-          <p className="text-[11px] text-ivory-400">
-            Default Password: <code className="text-gold-300">pari</code>
-          </p>
           <a href="/" className="inline-block text-xs text-gold-400 hover:underline mt-2">
             ← Return to Main Website
           </a>

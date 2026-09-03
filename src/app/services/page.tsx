@@ -1,4 +1,17 @@
-﻿'use client';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Services | Sri Balaji Tailoring Centre',
+  description: 'Explore our premium tailoring services including designer blouse stitching, bridal Aari embroidery, and tailoring courses in Nenmeli.',
+  alternates: {
+    canonical: 'https://sri-balaji-tailoring-website-five.vercel.app/services',
+  },
+  openGraph: {
+    title: 'Services | Sri Balaji Tailoring Centre',
+    description: 'Explore our premium tailoring services including designer blouse stitching, bridal Aari embroidery, and tailoring courses in Nenmeli.',
+    url: 'https://sri-balaji-tailoring-website-five.vercel.app/services',
+  }
+};
 
 import React from 'react';
 import Header from '@/components/Header';
@@ -12,6 +25,7 @@ export default function ServicesPage() {
 
       {/* Header */}
       <Header />
+      <h1 className="sr-only">Tailoring Services</h1>
 
       {/* Services Section */}
       <ServicesSection />

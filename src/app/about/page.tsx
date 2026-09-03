@@ -1,4 +1,17 @@
-﻿'use client';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'About | Sri Balaji Tailoring Centre',
+  description: 'Learn about Master Tailor J. Sundari and the 15+ years of experience behind Sri Balaji Tailoring Centre in Nenmeli, Sriperumbudur.',
+  alternates: {
+    canonical: 'https://sri-balaji-tailoring-website-five.vercel.app/about',
+  },
+  openGraph: {
+    title: 'About | Sri Balaji Tailoring Centre',
+    description: 'Learn about Master Tailor J. Sundari and the 15+ years of experience behind Sri Balaji Tailoring Centre in Nenmeli, Sriperumbudur.',
+    url: 'https://sri-balaji-tailoring-website-five.vercel.app/about',
+  }
+};
 
 import React from 'react';
 import Header from '@/components/Header';
@@ -12,6 +25,7 @@ export default function AboutPage() {
 
       {/* Header */}
       <Header />
+      <h1 className="sr-only">About Sri Balaji Tailoring Centre</h1>
 
       {/* About Section */}
       <AboutSection />

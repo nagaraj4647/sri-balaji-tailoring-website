@@ -1,4 +1,17 @@
-﻿'use client';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Reviews | Sri Balaji Tailoring Centre',
+  description: 'Read reviews and testimonials from our happy customers in Nenmeli and Sriperumbudur who love our perfect fit tailoring.',
+  alternates: {
+    canonical: 'https://sri-balaji-tailoring-website-five.vercel.app/reviews',
+  },
+  openGraph: {
+    title: 'Reviews | Sri Balaji Tailoring Centre',
+    description: 'Read reviews and testimonials from our happy customers in Nenmeli and Sriperumbudur who love our perfect fit tailoring.',
+    url: 'https://sri-balaji-tailoring-website-five.vercel.app/reviews',
+  }
+};
 
 import React from 'react';
 import Header from '@/components/Header';
@@ -12,6 +25,7 @@ export default function ReviewsPage() {
 
       {/* Header */}
       <Header />
+      <h1 className="sr-only">Customer Reviews</h1>
 
       {/* Reviews Section */}
       <ReviewsSection />

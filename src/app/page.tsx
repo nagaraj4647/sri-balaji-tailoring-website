@@ -1,4 +1,17 @@
-'use client';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Sri Balaji Tailoring Centre | Master Tailor J. Sundari',
+  description: 'Sri Balaji Tailoring Centre by Master Tailor J. Sundari in Nenmeli, Sriperumbudur. Designer blouse stitching, Aari & Zardosi embroidery, bridal blouses & tailoring courses.',
+  alternates: {
+    canonical: 'https://sri-balaji-tailoring-website-five.vercel.app/',
+  },
+  openGraph: {
+    title: 'Sri Balaji Tailoring Centre | Master Tailor J. Sundari',
+    description: 'Sri Balaji Tailoring Centre by Master Tailor J. Sundari in Nenmeli, Sriperumbudur. Designer blouse stitching, Aari & Zardosi embroidery, bridal blouses & tailoring courses.',
+    url: 'https://sri-balaji-tailoring-website-five.vercel.app/',
+  }
+};
 
 import React from 'react';
 import Header from '@/components/Header';
