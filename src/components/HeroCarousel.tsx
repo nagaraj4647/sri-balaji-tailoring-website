@@ -165,7 +165,7 @@ export default function HeroCarousel() {
                 src={img.src}
                 alt={img.alt}
                 fill
-                priority={true}
+                priority={idx === 0}
                 className="object-cover"
                 sizes="(max-width: 768px) 90vw, 420px"
               />
