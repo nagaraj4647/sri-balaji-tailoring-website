@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://sribalajitailoring.com';
+  const baseUrl = 'https://sri-balaji-tailoring-website-five.vercel.app';
 
   return [
     {
