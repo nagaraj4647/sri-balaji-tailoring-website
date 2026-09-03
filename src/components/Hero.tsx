@@ -14,8 +14,8 @@ export default function Hero() {
     >
       {/* Subtle Background Accents */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-maroon-800/40 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/3" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-maroon-600/20 rounded-full blur-[100px] translate-x-1/3 translate-y-1/3" />
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-maroon-800/40 to-transparent rounded-full -translate-x-1/2 -translate-y-1/3" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-maroon-600/20 to-transparent rounded-full translate-x-1/3 translate-y-1/3" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/20 to-transparent" />
       </div>
 
