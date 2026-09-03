@@ -6,7 +6,10 @@ import {
   ShieldCheck, Scissors, Grid, Star, Settings, 
   LogOut, Plus, Trash2, ExternalLink, MapPin, Phone, MessageCircle
 } from 'lucide-react';
-import { DataStore } from '@/lib/store';
+import { DataStore, INITIAL_SERVICES } from '@/lib/store';
+import { db, storage } from '@/lib/firebase';
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp, doc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { ServiceItem, GalleryItem, Review, GalleryCategory } from '@/lib/types';
 import { BOOKING_URL, SHOP_PHONE, SHOP_ADDRESS } from '@/lib/constants';
 
@@ -23,11 +26,13 @@ export default function AdminDashboardPage() {
 
   // Service Modal State
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [newServiceName, setNewServiceName] = useState('');
-  const [newServicePrice, setNewServicePrice] = useState('');
   const [newServiceDesc, setNewServiceDesc] = useState('');
-  const [newServiceImg, setNewServiceImg] = useState('');
-  const [newServiceDuration, setNewServiceDuration] = useState('3-5 Days');
+  const [newServiceFile, setNewServiceFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState('');
 
   // Gallery Modal State
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
@@ -49,14 +54,22 @@ export default function AdminDashboardPage() {
       router.push('/admin/login');
       return;
     }
-    refreshData();
-  }, [router]);
-
-  const refreshData = () => {
-    setServices(DataStore.getServices());
+    
     setGallery(DataStore.getGallery());
     setReviews(DataStore.getReviews());
-  };
+
+    const unsubscribe = onSnapshot(collection(db, 'services'), (snapshot) => {
+      const svcs: ServiceItem[] = [];
+      snapshot.forEach((docSnap) => {
+        svcs.push({ id: docSnap.id, ...docSnap.data() } as ServiceItem);
+      });
+      setServices(svcs);
+    }, (error) => {
+      console.error('Firestore Error:', error);
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   const handleLogout = () => {
     DataStore.setAdminLoggedIn(false);
@@ -64,32 +77,140 @@ export default function AdminDashboardPage() {
   };
 
   // Service Actions
-  const handleAddService = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newServiceName || !newServicePrice) return;
-    const newSrv: ServiceItem = {
-      id: `srv-${Date.now()}`,
-      name: newServiceName,
-      category: 'Blouse Stitching',
-      priceRange: newServicePrice,
-      duration: newServiceDuration,
-      description: newServiceDesc || 'Custom tailoring with guaranteed fit.',
-      imageUrl: newServiceImg || 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=800',
-    };
-    const updated = [...services, newSrv];
-    DataStore.saveServices(updated);
-    setServices(updated);
-    setIsServiceModalOpen(false);
-    setNewServiceName('');
-    setNewServicePrice('');
-    setNewServiceDesc('');
-    setNewServiceImg('');
+  const openEditServiceModal = (srv: ServiceItem) => {
+    setEditingServiceId(srv.id);
+    setNewServiceName(srv.name);
+    setNewServiceDesc(srv.description);
+    setNewServiceFile(null);
+    setUploadError('');
+    setIsServiceModalOpen(true);
   };
 
-  const handleDeleteService = (id: string) => {
-    const updated = services.filter(s => s.id !== id);
-    DataStore.saveServices(updated);
-    setServices(updated);
+  const handleSaveService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newServiceName || !newServiceDesc) return;
+    if (!editingServiceId && !newServiceFile) {
+      setUploadError('Please select an image for the new service.');
+      return;
+    }
+    if (newServiceFile && newServiceFile.size > 5 * 1024 * 1024) {
+      setUploadError('Image size exceeds 5MB limit.');
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError('');
+    setUploadProgress(0);
+
+    try {
+      let finalImageUrl = '';
+      let finalImagePath = '';
+
+      if (newServiceFile) {
+        const fileExt = newServiceFile.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `services/${fileName}`;
+        const storageRef = ref(storage, filePath);
+        
+        const uploadTask = uploadBytesResumable(storageRef, newServiceFile);
+        
+        await new Promise<void>((resolve, reject) => {
+          uploadTask.on('state_changed', 
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setUploadProgress(Math.round(progress));
+            }, 
+            (error) => reject(error), 
+            () => resolve()
+          );
+        });
+        
+        finalImageUrl = await getDownloadURL(storageRef);
+        finalImagePath = filePath;
+      }
+
+      if (editingServiceId) {
+        // Edit existing
+        const oldService = services.find(s => s.id === editingServiceId);
+        const updateData: any = {
+          name: newServiceName,
+          description: newServiceDesc,
+          updatedAt: serverTimestamp()
+        };
+        
+        if (finalImageUrl) {
+          updateData.imageUrl = finalImageUrl;
+          updateData.imagePath = finalImagePath;
+        }
+
+        await updateDoc(doc(db, 'services', editingServiceId), updateData);
+
+        // Delete old image if a new one was uploaded and old had an imagePath
+        if (finalImageUrl && oldService?.imagePath) {
+          try {
+            await deleteObject(ref(storage, oldService.imagePath));
+          } catch (err) {
+            console.error('Failed to delete old image', err);
+          }
+        }
+      } else {
+        // Add new
+        await addDoc(collection(db, 'services'), {
+          name: newServiceName,
+          category: 'Blouse Stitching', // Default category
+          description: newServiceDesc,
+          imageUrl: finalImageUrl,
+          imagePath: finalImagePath,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      setIsServiceModalOpen(false);
+      setEditingServiceId(null);
+      setNewServiceName('');
+      setNewServiceDesc('');
+      setNewServiceFile(null);
+    } catch (err: any) {
+      console.error(err);
+      setUploadError(err.message || 'Failed to save service.');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleDeleteService = async (srv: ServiceItem) => {
+    if (!window.confirm('Are you sure you want to delete this service?')) return;
+    try {
+      await deleteDoc(doc(db, 'services', srv.id));
+      if (srv.imagePath) {
+        await deleteObject(ref(storage, srv.imagePath)).catch(err => console.error('Error deleting image', err));
+      }
+    } catch (err) {
+      console.error('Failed to delete service', err);
+      alert('Failed to delete service');
+    }
+  };
+
+  const handleMigrateInitial = async () => {
+    if (!window.confirm('Migrate INITIAL_SERVICES to Firestore? This should only be done once.')) return;
+    try {
+      for (const srv of INITIAL_SERVICES) {
+        await addDoc(collection(db, 'services'), {
+          name: srv.name,
+          category: srv.category,
+          description: srv.description,
+          imageUrl: srv.imageUrl,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      alert('Migration successful!');
+    } catch (err) {
+      console.error(err);
+      alert('Migration failed.');
+    }
   };
 
   // Gallery Actions
@@ -165,61 +286,35 @@ export default function AdminDashboardPage() {
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
 
-          <button
-            onClick={handleLogout}
-            className="px-3.5 py-2 rounded-xl bg-maroon-900 border border-gold-500/30 text-gold-400 text-xs font-semibold hover:bg-gold-500 hover:text-maroon-950 transition-colors flex items-center gap-1.5"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
-        </div>
+          <div className="flex gap-2">
+                <button
+                  onClick={handleMigrateInitial}
+                  className="px-4 py-2 rounded-xl bg-stone-800 text-stone-300 font-bold text-xs uppercase tracking-wider hover:bg-stone-700"
+                >
+                  Migrate Data
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingServiceId(null);
+                    setNewServiceName('');
+                    setNewServiceDesc('');
+                    setNewServiceFile(null);
+                    setUploadError('');
+                    setIsServiceModalOpen(true);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-gold-500 text-maroon-950 font-bold text-xs uppercase tracking-wider shadow-gold hover:bg-gold-400 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New Service</span>
+                </button>
+              </div>
+            </div>
       </header>
 
-      {/* Main Admin Body */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        
-        {/* Navigation Tabs Bar */}
-        <div className="flex overflow-x-auto no-scrollbar gap-2 pb-2 border-b border-stone-800">
-          {[
-            { id: 'services', label: `Services (${services.length})`, icon: Scissors },
-            { id: 'gallery', label: `Gallery Portfolio (${gallery.length})`, icon: Grid },
-            { id: 'reviews', label: `Customer Reviews (${reviews.length})`, icon: Star },
-            { id: 'settings', label: 'Store Info & Settings', icon: Settings },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex-none px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
-                  isActive
-                    ? 'bg-gold-500 text-maroon-950 shadow-gold'
-                    : 'bg-stone-800/80 text-stone-300 hover:bg-stone-800 hover:text-gold-400'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
+      <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
         {/* TAB 1: SERVICES MANAGER */}
         {activeTab === 'services' && (
           <div className="space-y-6">
-            
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-serif font-bold text-gold-400">Shop Tailoring Services</h3>
-              <button
-                onClick={() => setIsServiceModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-gold-500 text-maroon-950 font-bold text-xs uppercase tracking-wider shadow-gold hover:bg-gold-400 flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add New Service</span>
-              </button>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((srv) => (
                 <div key={srv.id} className="p-5 rounded-3xl bg-stone-950 border border-stone-800 space-y-3 flex flex-col justify-between">
@@ -227,11 +322,16 @@ export default function AdminDashboardPage() {
                     <h4 className="text-lg font-serif font-bold text-gold-400">{srv.name}</h4>
                     <p className="text-xs text-stone-400 mt-1">{srv.description}</p>
                   </div>
-                  <div className="pt-3 border-t border-stone-800 flex justify-between items-center text-xs">
-                    <span className="font-bold text-emerald-400">{srv.priceRange}</span>
+                  <div className="pt-3 border-t border-stone-800 flex justify-end items-center gap-2 text-xs">
                     <button
-                      onClick={() => handleDeleteService(srv.id)}
-                      className="p-2 rounded-lg bg-red-950 text-red-400 hover:bg-red-900"
+                      onClick={() => openEditServiceModal(srv)}
+                      className="px-3 py-1.5 rounded-lg bg-stone-800 text-gold-400 hover:bg-stone-700 font-bold"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteService(srv)}
+                      className="p-1.5 rounded-lg bg-red-950 text-red-400 hover:bg-red-900"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -359,55 +459,78 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-      </div>
+      </main>
 
       {/* MODAL: ADD SERVICE */}
       {isServiceModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <form onSubmit={handleAddService} className="bg-stone-900 border border-gold-500/40 p-6 rounded-3xl w-full max-w-md space-y-4 text-xs">
-            <h3 className="text-lg font-serif font-bold text-gold-400">Add New Service</h3>
-            <input
-              type="text"
-              placeholder="Service Name"
-              required
-              value={newServiceName}
-              onChange={(e) => setNewServiceName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-white outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Price Range (e.g. ₹500 - ₹1,200)"
-              required
-              value={newServicePrice}
-              onChange={(e) => setNewServicePrice(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-white outline-none"
-            />
-            <input
-              type="url"
-              placeholder="Image URL"
-              value={newServiceImg}
-              onChange={(e) => setNewServiceImg(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-white outline-none"
-            />
-            <textarea
-              placeholder="Short Description"
-              value={newServiceDesc}
-              onChange={(e) => setNewServiceDesc(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-white outline-none"
-            />
+          <form onSubmit={handleSaveService} className="bg-stone-900 border border-gold-500/40 p-6 rounded-3xl w-full max-w-md space-y-4 text-xs">
+            <h3 className="text-lg font-serif font-bold text-gold-400">
+              {editingServiceId ? 'Edit Service' : 'Add New Service'}
+            </h3>
+            
+            {uploadError && (
+              <div className="p-2 rounded bg-red-950/50 border border-red-500 text-red-300">
+                {uploadError}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-stone-400 font-bold mb-1">Service Name</label>
+              <input
+                type="text"
+                required
+                value={newServiceName}
+                onChange={(e) => setNewServiceName(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-white outline-none"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-stone-400 font-bold mb-1">Service Image (JPG/PNG/WEBP, Max 5MB)</label>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => setNewServiceFile(e.target.files?.[0] || null)}
+                className="w-full text-stone-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-gold-500 file:text-maroon-950 hover:file:bg-gold-400"
+              />
+              {newServiceFile && (
+                <p className="mt-2 text-gold-400">Selected: {newServiceFile.name}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-stone-400 font-bold mb-1">Short Description</label>
+              <textarea
+                required
+                rows={3}
+                value={newServiceDesc}
+                onChange={(e) => setNewServiceDesc(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-white outline-none"
+              />
+            </div>
+
+            {isUploading && (
+              <div className="w-full bg-stone-800 rounded-full h-2">
+                <div className="bg-gold-500 h-2 rounded-full transition-all" style={{ width: `${uploadProgress}%` }}></div>
+              </div>
+            )}
+
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setIsServiceModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-stone-800 text-stone-300"
+                disabled={isUploading}
+                className="px-4 py-2 rounded-xl bg-stone-800 text-stone-300 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-gold-500 text-maroon-950 font-bold"
+                disabled={isUploading}
+                className="px-4 py-2 rounded-xl bg-gold-500 text-maroon-950 font-bold disabled:opacity-50"
               >
-                Save Service
+                {isUploading ? 'Saving...' : 'Save Service'}
               </button>
             </div>
           </form>

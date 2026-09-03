@@ -12,6 +12,7 @@ export interface ServiceItem {
   priceRange: string;
   duration: string;
   imageUrl: string;
+  imagePath?: string;
   category: ServiceCategory | string;
   featured?: boolean;
 }
