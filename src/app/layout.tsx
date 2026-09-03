@@ -16,8 +16,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Sri Balaji Tailoring Centre | Master Tailor J. Sundari | Nenmeli, Sriperumbudur",
-  description: "Sri Balaji Tailoring Centre by Master Tailor J. Sundari in Nenmeli, Sriperumbudur. Premier designer blouse stitching, heavy Aari & Zardosi embroidery work, bridal blouses & 3-month tailoring courses.",
+  title: "Sri Balaji Tailoring Centre | Nenmeli, Sriperumbudur",
+  description: "Sri Balaji Tailoring Centre by Master Tailor J. Sundari in Nenmeli, Sriperumbudur. Designer blouse stitching, Aari & Zardosi embroidery, bridal blouses & tailoring courses.",
   keywords: [
     "tailoring shop in Nenmeli",
     "blouse stitching in Nenmeli",
@@ -31,6 +31,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "J. Sundari" }],
   metadataBase: new URL("https://sribalajitailoring.com"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Sri Balaji Tailoring Centre | Premium Women's Tailoring & Embroidery",
     description: "Beautifully crafted blouses, embroidery and custom designs made with care in Nenmeli, Sriperumbudur by Master Tailor J. Sundari.",
