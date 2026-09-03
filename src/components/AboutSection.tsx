@@ -13,7 +13,7 @@ export default function AboutSection() {
         <div className="lg:col-span-5 relative flex justify-center">
           <div className="relative w-full max-w-sm sm:max-w-md aspect-[4/5] rounded-3xl overflow-hidden gold-border shadow-maroon">
             <Image
-              src="/sundari.png"
+              src="/sundari.webp"
               alt="Master Tailor J. Sundari at Sri Balaji Tailoring Centre"
               fill
               className="object-cover object-top"

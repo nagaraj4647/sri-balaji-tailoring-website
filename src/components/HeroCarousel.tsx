@@ -5,31 +5,31 @@ import Image from 'next/image';
 
 const CAROUSEL_IMAGES = [
   {
-    src: '/media_1788104026022.jpg',
+    src: '/media_1788104026022.webp',
     alt: 'Red Bridal Blouse',
     captionTitle: 'Bridal Collection',
     captionSubtitle: 'Exquisite Hand Embroidery',
   },
   {
-    src: '/media_1788104368876.jpg',
+    src: '/media_1788104368876.webp',
     alt: 'Purple Embroidery Sleeve',
     captionTitle: 'Signature Design',
     captionSubtitle: 'Custom Fitting & Styling',
   },
   {
-    src: '/media_1788104544950.jpg',
+    src: '/media_1788104544950.webp',
     alt: 'Teal Designer Blouse Back',
     captionTitle: 'Bespoke Patterns',
     captionSubtitle: 'Intricate Back Detailing',
   },
   {
-    src: '/media_1788104650047.jpg',
+    src: '/media_1788104650047.webp',
     alt: 'Purple Embroidery Sleeve',
     captionTitle: 'Wedding Collection',
     captionSubtitle: 'Traditional Elegance',
   },
   {
-    src: '/media_1788104733911.jpg',
+    src: '/media_1788104733911.webp',
     alt: 'Green Bridal Blouse',
     captionTitle: 'Modern Patterns',
     captionSubtitle: 'Contemporary Styling',

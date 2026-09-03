@@ -28,7 +28,7 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
           <div className="w-[44px] h-[44px] sm:w-[52px] sm:h-[52px] relative flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
             <Image
-              src="/logo.png"
+              src="/logo.webp"
               alt="Sri Balaji Tailoring Centre Logo"
               fill
               className="object-contain"

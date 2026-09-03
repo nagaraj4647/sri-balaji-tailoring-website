@@ -17,7 +17,7 @@ export default function Footer() {
             <div className="flex items-center justify-center md:justify-start space-x-2">
               <div className="w-12 h-12 relative flex-shrink-0 drop-shadow-md">
                 <Image
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="Sri Balaji Tailoring Centre Logo"
                   fill
                   className="object-contain"
