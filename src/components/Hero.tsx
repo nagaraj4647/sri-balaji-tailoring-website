@@ -99,7 +99,7 @@ export default function Hero() {
               <div className="w-px h-7 bg-gold-500/15" />
               <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
                 <p className="text-xl sm:text-2xl font-serif font-bold text-gold-400 flex items-center gap-1">
-                  5.0 <Star className="w-3.5 h-3.5 fill-gold-400 text-gold-400" />
+                  4.9 <Star className="w-3.5 h-3.5 fill-gold-400 text-gold-400" />
                 </p>
                 <p className="text-[10px] text-ivory-300/50 mt-0.5 tracking-wider uppercase">Client Rating</p>
               </div>
