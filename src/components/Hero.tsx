@@ -33,12 +33,15 @@ export default function Hero() {
 
             {/* Heading */}
             <div className="space-y-1">
-              <h1 className="text-[2.6rem] sm:text-5xl lg:text-[3rem] xl:text-[3.25rem] font-serif font-bold tracking-tight text-ivory-50 leading-[1.06]">
+              <div className="text-[2.6rem] sm:text-5xl lg:text-[3rem] xl:text-[3.25rem] font-serif font-bold tracking-tight text-ivory-50 leading-[1.06]">
                 SRI BALAJI
-              </h1>
+              </div>
               <div className="text-[2.6rem] sm:text-5xl lg:text-[3rem] xl:text-[3.25rem] font-serif font-bold tracking-tighter leading-[1.06]">
                 <span className="gold-gradient-text">TAILORING CENTRE</span>
               </div>
+              <h1 className="text-sm sm:text-base font-sans text-ivory-200 mt-3 font-medium">
+                Expert Bridal Blouse Stitching in Nenmeli, Sriperumbudur
+              </h1>
             </div>
 
             {/* Sub-line */}
